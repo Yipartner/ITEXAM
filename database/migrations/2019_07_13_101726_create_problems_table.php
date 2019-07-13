@@ -29,8 +29,9 @@ class CreateProblemsTable extends Migration
                 }
             }
              */
-            $table->string('answer')->nullable()->comment('答案，多选如 A,B');
+            $table->string('answer')->nullable()->comment('答案，多选如 A,B, 阅读题为 null');
             $table->string('knowledge')->nullable()->comment('知识点');
+            $table->string('status')->default('normal')->comment('题目状态 ：init ,normal,delete');
             $table->timestamps();
         });
     }
