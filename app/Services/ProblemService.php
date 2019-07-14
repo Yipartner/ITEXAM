@@ -91,4 +91,20 @@ class ProblemService
             ->get();
         return $problems;
     }
+
+    public function getByCondition(array $condition)
+    {
+        $problems = DB::table(self::$tbName)
+            ->where($condition)
+            ->get();
+        return $problems;
+    }
+
+    public function countByCondition(array $condition)
+    {
+        $num = DB::table(self::$tbName)
+            ->where($condition)
+            ->count();
+        return $num;
+    }
 }
