@@ -22,6 +22,13 @@ class PaperService
             ->insert($paper);
     }
 
+    public function getPaperStatus($paper_id){
+        $status = DB::table(self::$tableName)
+            ->where('id',$paper_id)
+            ->value('status');
+        return $status;
+    }
+
     // 更新试卷基本信息（试卷名称）
     public function updatePaperBaseInfo($paper_id, $paper_info)
     {
