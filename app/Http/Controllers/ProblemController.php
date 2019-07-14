@@ -22,10 +22,13 @@ class ProblemController extends Controller
 
     /**
      * ProblemController constructor.
+     * @param ProblemService $problemService
      */
     public function __construct(ProblemService $problemService)
     {
         $this->problemService = $problemService;
+        $this->middleware('token');
+        $this->middleware('teacher');
     }
 
 
@@ -69,6 +72,18 @@ class ProblemController extends Controller
             'message' => '更新题目成功'
         ]);
     }
+
+
+    public function getProblemById($id, Request $request)
+    {
+        $problem = $this->problemService->getOne($id);
+        return response()->json([
+            'code' => '1000',
+            'message' => '查询成功',
+            'problem' => $problem
+        ]);
+    }
+
 
     public function getProblemList(Request $request)
     {
@@ -115,15 +130,5 @@ class ProblemController extends Controller
             'code' => '1000',
             'message' => '删除题目成功'
         ]);
-    }
-
-    private function checkUserPermission(Request $request)
-    {
-        if (!in_array($request->user->role, ['teacher', 'admin'])) {
-            return response()->json([
-                'code' => '1010',
-                'message' => '无操作权限'
-            ]);
-        }
     }
 }

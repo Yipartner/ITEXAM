@@ -62,6 +62,15 @@ class ProblemService
         return $problems;
     }
 
+    public function getOne($probId)
+    {
+        $problems = DB::table(self::$tbName)
+            ->where('id', $probId)
+            ->first();
+        return $problems;
+    }
+
+
     /**
      * 根据学科获取题目
      * @param $subject
