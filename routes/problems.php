@@ -7,13 +7,10 @@
  */
 
 
-Route::prefix('problems')->group(function () {
-
-    Route::post('', 'ProblemController@createProblem');
-    Route::put('{$probId}', 'ProblemController@updateProblem');
-    Route::get('id/{id}', 'ProblemController@getProblemById');
-    Route::get('search', 'ProblemController@searchProject');
-    Route::get('all', 'ProblemController@getProblemList');
-    Route::get('by/{subject}', 'ProblemController@getProblemsBySubject');
-    Route::delete('{probId}', 'ProblemController@deleteProblem');
-});
+    Route::post('problems', 'ProblemController@createProblem');
+    Route::put('problems/{$probId}', 'ProblemController@updateProblem');
+    Route::get('problems/id/{id}', 'ProblemController@getProblemById');
+    Route::get('problems/search', 'ProblemController@searchProject');
+    Route::get('problems/all', 'ProblemController@getProblemList');
+    Route::get('problems/by/{subject}', 'ProblemController@getProblemsBySubject');
+    Route::delete('problems/{probId}', 'ProblemController@deleteProblem');
