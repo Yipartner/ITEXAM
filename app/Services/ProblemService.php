@@ -59,15 +59,19 @@ class ProblemService
     {
         $problems = DB::table(self::$tbName)
             ->paginate($pageSize);
+
+        $problems = self::resolveProblems($problems);
         return $problems;
     }
 
     public function getOne($probId)
     {
-        $problems = DB::table(self::$tbName)
+        $problem = DB::table(self::$tbName)
             ->where('id', $probId)
             ->first();
-        return $problems;
+
+        $problem = self::resolveProblem($problem);
+        return $problem;
     }
 
 
@@ -82,6 +86,8 @@ class ProblemService
         $problems = DB::table(self::$tbName)
             ->where('subject', $subject)
             ->paginate($pageSize);
+
+        $problems = self::resolveProblems($problems);
         return $problems;
     }
 
@@ -96,6 +102,8 @@ class ProblemService
         $problems = DB::table(self::$tbName)
             ->whereIn('id', $probIds)
             ->get();
+
+        $problems = self::resolveProblems($problems);
         return $problems;
     }
 
@@ -104,6 +112,8 @@ class ProblemService
         $problems = DB::table(self::$tbName)
             ->where($condition)
             ->get();
+
+        $problems = self::resolveProblems($problems);
         return $problems;
     }
 
@@ -122,7 +132,7 @@ class ProblemService
      */
     public static function resolveProblem($problem)
     {
-        if ($problem->content) {
+        if (isset($problem->content)) {
             $problem->content = json_decode($problem->content);
         }
         return $problem;
@@ -136,7 +146,7 @@ class ProblemService
     public static function resolveProblems($problems)
     {
         foreach ($problems as $problem) {
-            if ($problem->content) {
+            if (isset($problem->content)) {
                 $problem->content = json_decode($problem->content);
             }
         }
@@ -155,18 +165,18 @@ class ProblemService
     public function searchProblems($probId, $type, $subject, $knowledge, $pageSize = 15)
     {
         $condition = [];
-        if (isset($probId)) {
+        if (!empty($probId)) {
             $condition[] = ['id', '=', $probId];
         }
-        if (isset($type)) {
+        if ($type > 0) {
             $condition[] = ['type', '=', $type];
 
         }
-        if (isset($subject)) {
+        if ($subject > 0) {
             $condition[] = ['subject', '=', $subject];
 
         }
-        if (isset($knowledge)) {
+        if (!empty($knowledge)) {
             $condition[] = ['knowledge', 'like', '%' . $knowledge . '%'];
 
         }
@@ -174,6 +184,8 @@ class ProblemService
         $problems = DB::table(self::$tbName)
             ->where($condition)
             ->paginate($pageSize);
+
+        $problems = self::resolveProblems($problems);
         return $problems;
     }
 }

@@ -14,10 +14,9 @@ class ProblemController extends Controller
         'type' => 'required',
         'option_num' => 'required',
         'subject' => 'required',
-        'content.problem' => 'required',
-        'answer' => 'required',
-        'knowledge' => 'required',
-        'status' => ''
+        'content' => 'required',
+        'answer' => '',
+        'knowledge' => '',
     ];
 
     /**
@@ -27,14 +26,12 @@ class ProblemController extends Controller
     public function __construct(ProblemService $problemService)
     {
         $this->problemService = $problemService;
-        $this->middleware('token');
-        $this->middleware('teacher');
+        $this->middleware(['token', 'teacher']);
     }
 
 
     public function createProblem(Request $request)
     {
-        $this->checkUserPermission($request);
         $rules = $this->rules;
         $validator = ValidationHelper::validateCheck($request->all(), $rules);
         if ($validator->fails()) {
@@ -44,6 +41,10 @@ class ProblemController extends Controller
             ]);
         }
         $probInfo = ValidationHelper::getInputData($request, $rules);
+        // 风格统一为{}
+        if ($probInfo['option_num'] == 0) {
+            $probInfo['content']['options'] = new \ArrayObject();
+        }
         $probInfo['content'] = json_encode($probInfo['content']);
 
         $this->problemService->addProblem($probInfo);
@@ -64,6 +65,9 @@ class ProblemController extends Controller
             ]);
         }
         $probInfo = ValidationHelper::getInputData($request, $rules);
+        if ($probInfo['option_num'] == 0) {
+            $probInfo['content']['options'] = new \ArrayObject();
+        }
         $probInfo['content'] = json_encode($probInfo['content']);
 
         $this->problemService->updateProblem($probId, $probInfo);
@@ -76,6 +80,7 @@ class ProblemController extends Controller
 
     public function getProblemById($id, Request $request)
     {
+
         $problem = $this->problemService->getOne($id);
         return response()->json([
             'code' => '1000',
@@ -87,7 +92,7 @@ class ProblemController extends Controller
 
     public function getProblemList(Request $request)
     {
-        $pageSize = $request->pageSize ?? 15;
+        $pageSize = intval($request->pageSize) > 0 ? intval($request->pageSize) : 15;
         $problems = $this->problemService->getAll($pageSize);
         return response()->json([
             'code' => '1000',
@@ -98,7 +103,7 @@ class ProblemController extends Controller
 
     public function getProblemsBySubject($subject, Request $request)
     {
-        $pageSize = $request->pageSize ?? 15;
+        $pageSize = intval($request->pageSize) > 0 ? intval($request->pageSize) : 15;
         $problems = $this->problemService->getBySubject($subject, $pageSize);
         return response()->json([
             'code' => '1000',
@@ -110,10 +115,10 @@ class ProblemController extends Controller
     public function searchProblem(Request $request)
     {
         $probId = $request->id;
-        $type = $request->type;
-        $subject = $request->subject;
+        $type = intval($request->type);
+        $subject = intval($request->subject);
         $knowledge = $request->knowledge;
-        $pageSize = $request->pageSize ?? 15;
+        $pageSize = intval($request->pageSize) > 0 ? intval($request->pageSize) : 15;
 
         $problems = $this->problemService->searchProblems($probId, $type, $subject, $knowledge, $pageSize);
         return response()->json([
