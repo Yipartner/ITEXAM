@@ -23,7 +23,7 @@ class ProblemService
             'updated_at' => Carbon::now()
         ]);
         DB::table(self::$tbName)
-            ->insertGetId($probInfo);
+            ->insert($probInfo);
     }
 
     public function updateProblem($probId, $probInfo)
@@ -58,8 +58,7 @@ class ProblemService
     public function getAll($pageSize = 15)
     {
         $problems = DB::table(self::$tbName)
-            ->paginate($pageSize)
-            ->get();
+            ->paginate($pageSize);
         return $problems;
     }
 
@@ -73,8 +72,7 @@ class ProblemService
     {
         $problems = DB::table(self::$tbName)
             ->where('subject', $subject)
-            ->paginate($pageSize)
-            ->get();
+            ->paginate($pageSize);
         return $problems;
     }
 
@@ -106,5 +104,67 @@ class ProblemService
             ->where($condition)
             ->count();
         return $num;
+    }
+
+    /**
+     * 题目content 字符串 转为 json
+     * @param $problem
+     * @return mixed
+     */
+    public static function resolveProblem($problem)
+    {
+        if ($problem->content) {
+            $problem->content = json_decode($problem->content);
+        }
+        return $problem;
+    }
+
+    /**
+     * 题目content 字符串 转为 json
+     * @param $problem
+     * @return mixed
+     */
+    public static function resolveProblems($problems)
+    {
+        foreach ($problems as $problem) {
+            if ($problem->content) {
+                $problem->content = json_decode($problem->content);
+            }
+        }
+        return $problems;
+    }
+
+    /**
+     * 条件查询题目
+     * @param $probId
+     * @param $type
+     * @param $subject
+     * @param $knowledge
+     * @param int $pageSize
+     * @return mixed
+     */
+    public function searchProblems($probId, $type, $subject, $knowledge, $pageSize = 15)
+    {
+        $condition = [];
+        if (isset($probId)) {
+            $condition[] = ['id', '=', $probId];
+        }
+        if (isset($type)) {
+            $condition[] = ['type', '=', $type];
+
+        }
+        if (isset($subject)) {
+            $condition[] = ['subject', '=', $subject];
+
+        }
+        if (isset($knowledge)) {
+            $condition[] = ['knowledge', 'like', '%' . $knowledge . '%'];
+
+        }
+
+        $problems = DB::table(self::$tbName)
+            ->where($condition)
+            ->paginate($pageSize);
+        return $problems;
     }
 }
