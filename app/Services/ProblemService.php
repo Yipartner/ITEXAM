@@ -23,7 +23,7 @@ class ProblemService
             'updated_at' => Carbon::now()
         ]);
         DB::table(self::$tbName)
-            ->insertGetId($probInfo);
+            ->insert($probInfo);
     }
 
     public function updateProblem($probId, $probInfo)
@@ -58,10 +58,22 @@ class ProblemService
     public function getAll($pageSize = 15)
     {
         $problems = DB::table(self::$tbName)
-            ->paginate($pageSize)
-            ->get();
+            ->paginate($pageSize);
+
+        $problems = self::resolveProblems($problems);
         return $problems;
     }
+
+    public function getOne($probId)
+    {
+        $problem = DB::table(self::$tbName)
+            ->where('id', $probId)
+            ->first();
+
+        $problem = self::resolveProblem($problem);
+        return $problem;
+    }
+
 
     /**
      * 根据学科获取题目
@@ -73,8 +85,9 @@ class ProblemService
     {
         $problems = DB::table(self::$tbName)
             ->where('subject', $subject)
-            ->paginate($pageSize)
-            ->get();
+            ->paginate($pageSize);
+
+        $problems = self::resolveProblems($problems);
         return $problems;
     }
 
@@ -89,6 +102,8 @@ class ProblemService
         $problems = DB::table(self::$tbName)
             ->whereIn('id', $probIds)
             ->get();
+
+        $problems = self::resolveProblems($problems);
         return $problems;
     }
 
@@ -97,6 +112,8 @@ class ProblemService
         $problems = DB::table(self::$tbName)
             ->where($condition)
             ->get();
+
+        $problems = self::resolveProblems($problems);
         return $problems;
     }
 
@@ -106,5 +123,69 @@ class ProblemService
             ->where($condition)
             ->count();
         return $num;
+    }
+
+    /**
+     * 题目content 字符串 转为 json
+     * @param $problem
+     * @return mixed
+     */
+    public static function resolveProblem($problem)
+    {
+        if (isset($problem->content)) {
+            $problem->content = json_decode($problem->content);
+        }
+        return $problem;
+    }
+
+    /**
+     * 题目content 字符串 转为 json
+     * @param $problem
+     * @return mixed
+     */
+    public static function resolveProblems($problems)
+    {
+        foreach ($problems as $problem) {
+            if (isset($problem->content)) {
+                $problem->content = json_decode($problem->content);
+            }
+        }
+        return $problems;
+    }
+
+    /**
+     * 条件查询题目
+     * @param $probId
+     * @param $type
+     * @param $subject
+     * @param $knowledge
+     * @param int $pageSize
+     * @return mixed
+     */
+    public function searchProblems($probId, $type, $subject, $knowledge, $pageSize = 15)
+    {
+        $condition = [];
+        if (!empty($probId)) {
+            $condition[] = ['id', '=', $probId];
+        }
+        if ($type > 0) {
+            $condition[] = ['type', '=', $type];
+
+        }
+        if ($subject > 0) {
+            $condition[] = ['subject', '=', $subject];
+
+        }
+        if (!empty($knowledge)) {
+            $condition[] = ['knowledge', 'like', '%' . $knowledge . '%'];
+
+        }
+
+        $problems = DB::table(self::$tbName)
+            ->where($condition)
+            ->paginate($pageSize);
+
+        $problems = self::resolveProblems($problems);
+        return $problems;
     }
 }
