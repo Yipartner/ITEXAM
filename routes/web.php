@@ -22,10 +22,16 @@ Route::delete('user','UserController@deleteUsers');
 
 
 Route::post('/create/blockpaper','PaperController@createWhitePaper');
-Route::post('/paper/problem/add','PaperController@addProblem');
-Route::post('/paper/problem/update','PaperController@updateProblem');
+//Route::post('/paper/problem/add','PaperController@addProblem');
+Route::post('/paper/problem/edit','PaperController@updateProblem');
 Route::post('/paper/update','PaperController@updatePaperBaseInfo');
+Route::post('/paper/finish','PaperController@finishPaper');
 Route::get('/paper','PaperController@getPaperInfo');
+
+
 
 Route::post('/paper/save','PaperController@save');
 Route::post('/paper/submit','PaperController@submit');
+
+Route::post('/paper/user/add','PaperController@addPaperUser');
+Route::post('/paper/user/delete','PaperController@deletePaperUser');

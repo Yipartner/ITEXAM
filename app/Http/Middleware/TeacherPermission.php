@@ -17,8 +17,8 @@ class TeacherPermission
 {
     public function handle(Request $request, Closure $next)
     {
-        if ($request->user->role == 'teacher') {
-            return $next;
+        if ($request->user->role == 'teacher' || $request->user->role == 'admin' ) {
+            return $next($request);
         } else {
             return response()->json([
                 'code' => 101,

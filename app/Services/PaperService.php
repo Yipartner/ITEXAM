@@ -52,7 +52,7 @@ class PaperService
     {
         $array = [];
         foreach ($problems as $problem) {
-            $array = array_merge($array, [
+            array_push($array, [
                 'paper_id' => $paper_id,
                 'problem_id' => $problem
             ]);
@@ -85,6 +85,16 @@ class PaperService
             'problems' => $problems
         ];
     }
+
+    public function changePaperStatus($paper_id,$status){
+        DB::table(self::$tableName)
+            ->where('id',$paper_id)
+            ->update([
+                'status'=>$status
+            ]);
+    }
+
+
 
 
 }

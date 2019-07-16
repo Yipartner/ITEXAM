@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Services\PaperService;
+use App\Services\UserPaperService;
 use Illuminate\Http\Request;
 
 class PaperController extends Controller
 {
     //
     private $paperService;
+    private $userPaperService;
 
-    public function __construct(PaperService $paperService)
+    public function __construct(PaperService $paperService,UserPaperService $userPaperService)
     {
         $this->paperService = $paperService;
+        $this->userPaperService = $userPaperService;
         $this->middleware('token')->except(['getPaperInfo']);
         $this->middleware('teacher')->except(['getPaperInfo']);
 
@@ -52,7 +55,7 @@ class PaperController extends Controller
                 'message' => '缺少试卷id'
             ]);
         }
-        $this->paperService->addProblemToPaper($paper,$problems);
+        $this->paperService->updateProblemPaper($paper,$problems);
         return response()->json([
             'code'=> 1000,
             'message'=> '添加题目成功'
@@ -79,6 +82,15 @@ class PaperController extends Controller
         return response()->json([
             'code'=> 1000,
             'message'=> '修改试卷题目成功'
+        ]);
+    }
+
+    public function finishPaper(Request $request){
+        $paper = $request->input('paper_id',-1);
+        $this->paperService->changePaperStatus($paper,'normal');
+        return response()->json([
+            'code' => 1000,
+            'message'=> '试卷已锁定'
         ]);
     }
 
@@ -139,5 +151,25 @@ class PaperController extends Controller
     public function quickCreatePaper(Request $request){
         $total_num = $request->input('problem_num',10);
         // todo
+    }
+
+    public function addPaperUser(Request $request){
+        $paper = $request->input('paper_id');
+        $users = $request->input('users');
+        $this->userPaperService->addUsersToPaper($paper,$users);
+        return response()->json([
+            'code'=> 1000,
+            'message' => "添加成功"
+        ]);
+    }
+
+    public function deletePaperUser(Request $request){
+        $paper = $request->input('paper_id');
+        $users = $request->input('users');
+        $this->userPaperService->deletePaperUser($paper,$users);
+        return response()->json([
+            'code'=> 1000,
+            'message' => "删除成功"
+        ]);
     }
 }
