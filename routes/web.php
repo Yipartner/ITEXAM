@@ -28,11 +28,12 @@ Route::post('/paper/problem/edit','PaperController@updateProblem');
 Route::post('/paper/update','PaperController@updatePaperBaseInfo');
 Route::post('/paper/finish','PaperController@finishPaper');
 Route::get('/paper','PaperController@getPaperInfo');
-
+Route::get('/papers','PaperController@getPaperList');
 
 
 Route::post('/paper/save','PaperController@save');
 Route::post('/paper/submit','PaperController@submit');
 
+Route::get('/paper/user','PaperController@getPaperUser');
 Route::post('/paper/user/add','PaperController@addPaperUser');
-Route::post('/paper/user/delete','PaperController@deletePaperUser');
+Route::delete('/paper/user','PaperController@deletePaperUser');

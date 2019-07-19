@@ -9,6 +9,7 @@
 namespace App\Services;
 
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class PaperService
@@ -18,6 +19,9 @@ class PaperService
     // 创建试卷记录
     public function createPaper($paper)
     {
+        $time = Carbon::now();
+        $paper['created_at'] =$time;
+        $paper['updated_at'] =$time;
         DB::table(self::$tableName)
             ->insert($paper);
     }

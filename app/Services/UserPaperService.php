@@ -9,6 +9,7 @@
 namespace App\Services;
 
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class UserPaperService
@@ -16,13 +17,18 @@ class UserPaperService
     public static $tableName = 'user_papers';
 
     public function addUsersToPaper($paper_id,$users){
-        $old_users = $this->getPaperUser($paper_id);
+        $old_users = DB::table(self::$tableName)
+            ->where('paper_id',$paper_id)
+            ->pluck('user_id')->toArray();
         $need_insert = array_diff($users,$old_users);
         $data = [];
+        $time = Carbon::now();
         foreach ($need_insert as $user){
             array_push($data,[
                 'user_id'=>$user,
                 'paper_id' => $paper_id,
+                'created_at'=>$time,
+                'updated_at'=>$time
             ]);
         }
         DB::table(self::$tableName)
@@ -30,10 +36,21 @@ class UserPaperService
     }
 
     public function getPaperUser($paper_id){
-        $users = DB::table(self::$tableName)
+        $user_ids = DB::table(self::$tableName)
             ->where('paper_id',$paper_id)
             ->pluck('user_id');
-        return $users;
+        $user_count =  DB::table(self::$tableName)
+            ->where('paper_id',$paper_id)
+            ->count();
+        $users = DB::table('users')
+            ->whereIn('users.id',$user_ids)
+            ->join(self::$tableName,self::$tableName.".user_id",'=',"users.id")
+            ->select('users.id','users.name','users.sex','users.card_num','users.role',self::$tableName.".status as paper_status" )
+            ->get();
+        return [
+            'count'=>$user_count,
+            'users'=>$users
+        ];
     }
 
     public function deletePaperUser($paper_id,$users){

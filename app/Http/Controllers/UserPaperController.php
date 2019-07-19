@@ -16,7 +16,7 @@ class UserPaperController extends Controller
     {
         $this->userPaperService = $userPaperService;
         $this->judgeService = $judgeService;
-        $this->middleware('token');
+//        $this->middleware('token');
     }
 
     public function save(Request $request)

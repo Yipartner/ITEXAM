@@ -20,6 +20,8 @@ class CreateUserPaperProblemsTable extends Migration
             $table->integer('paper_id');
             $table->integer('problem_id');
             $table->string('user_answer')->nullable();
+            $table->string('user_answer_history')->nullable();
+            $table->string('user_answer_time')->nullable();
             $table->string('judge_result')->nullable();
             $table->dateTime('judge_time')->nullable();
 
