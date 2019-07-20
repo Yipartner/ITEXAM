@@ -117,4 +117,19 @@ class UserService
             ->delete();
     }
 
+    public function getAllUser($role = null)
+    {
+        $users = null;
+        if ($role == null || !in_array($role,['admin','student','teacher']))
+            $users = DB::table(self::$tableName)
+                ->select('id', 'name', 'sex', 'email', 'card_num', 'role')
+                ->get();
+        else{
+            $users = DB::table(self::$tableName)
+                ->where('role',$role)
+                ->select('id', 'name', 'sex', 'email', 'card_num', 'role')
+                ->get();
+        }
+        return $users;
+    }
 }

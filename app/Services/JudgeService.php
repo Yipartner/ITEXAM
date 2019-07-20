@@ -25,6 +25,10 @@ class JudgeService
             ->whereIn('id',$problems)
             ->select('id','answer')
             ->get()->toArray();
+        $answer = [];
+        foreach ($problem_answer as $problem){
+            $answer[$problem->id] = $problem->answer;
+        }
         // 获取用户作答情况
         $user_problem = DB::table('user_paper_problems')
             ->where('user_id',$user_id)
@@ -32,12 +36,27 @@ class JudgeService
             ->get()->toArray();
         $right = [];
         $wrong = [];
+        $res = [];
         // 判题
+//        dd($user_problem);
         foreach ($user_problem as $problem){
-            if ($problem['user_answer'] == $problem_answer[$problem['problem_id']] || $problem_answer[$problem['problem_id']] == null){
-                array_push($right,$problem['problem_id']);
+//            dd($problem,$answer);
+            //如果答案相同，或者answer答案为空（阅读题答案为空，默认正确）
+            if ($problem->user_answer == $answer[$problem->problem_id]
+                || $answer[$problem->problem_id] == null){
+                array_push($right,$problem->problem_id);
+                array_push($res,[
+                    'id'=>$problem->problem_id,
+                    'user_answer'=>$problem->user_answer,
+                    'res' => 'right',
+                ]);
             }else{
-                array_push($wrong,$problem['problem_id']);
+                array_push($wrong,$problem->problem_id);
+                array_push($res,[
+                    'id'=>$problem->problem_id,
+                    'user_answer'=>$problem->user_answer,
+                    'res' => 'wrong',
+                ]);
             }
         }
         $time = Carbon::now();
@@ -56,10 +75,7 @@ class JudgeService
                 'judge_result'=>'wrong',
                 'judge_time'=>$time
             ]);
-        return [
-            'right'=>$right,
-            'wrong'=>$wrong
-        ];
+        return $res;
     }
 
 }

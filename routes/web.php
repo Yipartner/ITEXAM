@@ -18,8 +18,9 @@ Route::get('/', function () {
 
 Route::post('/add/user','UserController@addSingleUser');
 Route::post('/login','UserController@login');
-Route::get('user','UserController@getUser');
-Route::delete('user','UserController@deleteUsers');
+Route::get('/user','UserController@getUser');
+Route::get('/users','UserController@getUsers');
+Route::delete('/user','UserController@deleteUsers');
 
 
 Route::post('/create/blockpaper','PaperController@createWhitePaper');
@@ -31,8 +32,8 @@ Route::get('/paper','PaperController@getPaperInfo');
 Route::get('/papers','PaperController@getPaperList');
 
 
-Route::post('/paper/save','PaperController@save');
-Route::post('/paper/submit','PaperController@submit');
+Route::post('/paper/save','UserPaperController@save');
+Route::post('/paper/submit','UserPaperController@submit');
 
 Route::get('/paper/user','PaperController@getPaperUser');
 Route::post('/paper/user/add','PaperController@addPaperUser');

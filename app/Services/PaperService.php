@@ -82,8 +82,15 @@ class PaperService
             ->where('id', $paper_id)
             ->first();
         $problems = DB::table('paper_problems')
-            ->where('paper_id', $paper_id)
-            ->pluck('problem_id');
+            ->where('paper_problems.paper_id', $paper_id)
+            ->join('problems','paper_problems.problem_id','=','problems.id')
+            ->select('problems.id','problems.type','problems.option_num','problems.subject','content','knowledge','status')
+            ->get();
+        foreach ($problems as $problem){
+            if (isset($problem->content)) {
+                $problem->content = json_decode($problem->content);
+            }
+        }
         return [
             'info' => $info,
             'problems' => $problems

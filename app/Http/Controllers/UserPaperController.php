@@ -12,11 +12,11 @@ class UserPaperController extends Controller
     private $userPaperService;
     private $judgeService;
 
-    public function __construct(UserPaperService $userPaperService,JudgeService $judgeService)
+    public function __construct(UserPaperService $userPaperService, JudgeService $judgeService)
     {
         $this->userPaperService = $userPaperService;
         $this->judgeService = $judgeService;
-//        $this->middleware('token');
+        $this->middleware('token');
     }
 
     public function save(Request $request)
@@ -34,8 +34,13 @@ class UserPaperController extends Controller
         foreach ($user_paper_problem as $problem) {
             array_push($data, [
                 'user_id' => $user->id,
+                'paper_id'=> $paper_id,
                 'problem_id' => $problem['id'],
-                'user_answer' => $problem['user_answer']
+                'user_answer' => isset($problem['user_answer']) ? $problem['user_answer'] : null,
+                'answer_info' => isset($problem['answer_info']) ? json_encode($problem['answer_info']) : json_encode([
+                    'history' => null
+                ]),
+                'answer_cost' => isset($problem['answer_cost']) ? $problem['answer_cost'] : 0,
             ]);
         }
         $this->userPaperService->saveUserProblem($user->id, $paper_id, $data);
@@ -46,7 +51,8 @@ class UserPaperController extends Controller
 
     }
 
-    public function submit(Request $request){
+    public function submit(Request $request)
+    {
         $paper_id = $request->input('paper_id', null);
         if ($paper_id == null) {
             return response()->json([
@@ -60,19 +66,25 @@ class UserPaperController extends Controller
         foreach ($user_paper_problem as $problem) {
             array_push($data, [
                 'user_id' => $user->id,
+                'paper_id'=> $paper_id,
                 'problem_id' => $problem['id'],
-                'user_answer' => $problem['user_answer']
+                'user_answer' => isset($problem['user_answer']) ? $problem['user_answer'] : null,
+                'answer_info' => isset($problem['answer_info']) ? json_encode($problem['answer_info']) : json_encode([
+                    'history' => null
+                ]),
+                'answer_cost' => isset($problem['answer_cost']) ? $problem['answer_cost'] : 0,
             ]);
         }
         // 提交
         $this->userPaperService->saveUserProblem($user->id, $paper_id, $data);
         // 判题
-        $this->judgeService->judge($user->id,$paper_id);
+        $res = $this->judgeService->judge($user->id, $paper_id);
         // 卷子状态修改为 finish
-        $this->userPaperService->finishDoing($user->id,$paper_id);
+        $this->userPaperService->finishDoing($user->id, $paper_id);
         return response()->json([
             'code' => 1000,
-            'message' => '提交成功'
+            'message' => '提交成功',
+            'data' => $res
         ]);
     }
 }

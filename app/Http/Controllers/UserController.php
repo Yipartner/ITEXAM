@@ -139,4 +139,13 @@ class UserController extends Controller
         //TODO
     }
 
+    public function getUsers(Request $request){
+        $role = $request->input('role',null);
+        $users = $this->userService->getAllUser($role);
+        return response()->json([
+            'code'=>1000,
+            'data'=>$users,
+            'message'=>'查询用户列表成功'
+        ]);
+    }
 }
