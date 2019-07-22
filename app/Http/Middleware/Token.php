@@ -60,5 +60,5 @@ class DefaultUser{
     public $id = 1;
     public $name = '测试用户';
     public $card_num = '20160000';
-    public $role = 'student';
+    public $role = 'teacher';
 }

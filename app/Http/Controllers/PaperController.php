@@ -47,7 +47,7 @@ class PaperController extends Controller
         if ($this->paperService->getPaperStatus($paper) != 'init') {
             return response()->json([
                 'code' => 3001,
-                'message' => '当前时间的状态不允许修改'
+                'message' => '当前试卷的状态不允许修改'
             ]);
         }
         $problems = $request->input('problems', []);
@@ -76,7 +76,7 @@ class PaperController extends Controller
         if ($this->paperService->getPaperStatus($paper) != 'init') {
             return response()->json([
                 'code' => 3001,
-                'message' => '当前时间的状态不允许修改'
+                'message' => '当前试卷的状态不允许修改'
             ]);
         }
         $problems = $request->input('problems', []);
@@ -167,7 +167,7 @@ class PaperController extends Controller
         if ($this->paperService->getPaperStatus($paper) != 'normal') {
             return response()->json([
                 'code' => 3001,
-                'message' => '当前时间的状态不允许修改'
+                'message' => '当前试卷的状态不允许修改'
             ]);
         }
         $users = $request->input('users');
