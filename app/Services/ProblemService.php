@@ -58,6 +58,9 @@ class ProblemService
     public function getAll($pageSize = 15)
     {
         $problems = DB::table(self::$tbName)
+            ->select(self::$tbName . '.*', DB::Raw("IFNULL(subjects.name,'未分类') as subject_name"))
+            ->leftJoin('subjects', 'subjects.id', '=', self::$tbName . '.subject')
+            ->orderBy('id', 'asc')
             ->paginate($pageSize);
 
         $problems = self::resolveProblems($problems);
@@ -67,7 +70,9 @@ class ProblemService
     public function getOne($probId)
     {
         $problem = DB::table(self::$tbName)
-            ->where('id', $probId)
+            ->select(self::$tbName . '.*', DB::Raw("IFNULL(subjects.name,'未分类') as subject_name"))
+            ->leftJoin('subjects', 'subjects.id', '=', self::$tbName . '.subject')
+            ->where(self::$tbName . '.id', $probId)
             ->first();
 
         $problem = self::resolveProblem($problem);
@@ -84,7 +89,10 @@ class ProblemService
     public function getBySubject($subject, $pageSize = 15)
     {
         $problems = DB::table(self::$tbName)
+            ->select(self::$tbName . '.*', DB::Raw("IFNULL(subjects.name,'未分类') as subject_name"))
+            ->leftJoin('subjects', 'subjects.id', '=', self::$tbName . '.subject')
             ->where('subject', $subject)
+            ->orderBy('id', 'asc')
             ->paginate($pageSize);
 
         $problems = self::resolveProblems($problems);
@@ -100,7 +108,10 @@ class ProblemService
     public function getProblems(array $probIds)
     {
         $problems = DB::table(self::$tbName)
-            ->whereIn('id', $probIds)
+            ->select(self::$tbName . '.*', "IFNULL('subjects.name', '未分类')")
+            ->leftJoin('subjects', 'subjects.id', '=', self::$tbName . '.subject')
+            ->whereIn(self::$tbName . '.id', $probIds)
+            ->orderBy('id', 'asc')
             ->get();
 
         $problems = self::resolveProblems($problems);
@@ -166,7 +177,7 @@ class ProblemService
     {
         $condition = [];
         if (!empty($probId)) {
-            $condition[] = ['id', '=', $probId];
+            $condition[] = [self::$tbName . '.id', '=', $probId];
         }
         if ($type > 0) {
             $condition[] = ['type', '=', $type];
@@ -182,7 +193,10 @@ class ProblemService
         }
 
         $problems = DB::table(self::$tbName)
+            ->select(self::$tbName . '.*', DB::Raw("IFNULL(subjects.name,'未分类') as subject_name"))
+            ->leftJoin('subjects', 'subjects.id', '=', self::$tbName . '.subject')
             ->where($condition)
+            ->orderBy('id', 'asc')
             ->paginate($pageSize);
 
         $problems = self::resolveProblems($problems);

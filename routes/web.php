@@ -12,6 +12,7 @@
 */
 
 include "problems.php";
+include "subject.php";
 Route::get('/', function () {
     return view('welcome');
 });
