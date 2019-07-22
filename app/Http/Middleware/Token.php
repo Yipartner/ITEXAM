@@ -18,8 +18,8 @@ class Token
 
     public function handle(Request $request, Closure $next)
     {
-        $request->user = new DefaultUser();
-        return $next($request);
+//        $request->user = new DefaultUser();
+//        return $next($request);
         if (empty($request->header('token'))) {
             return response()->json([
                 'code' => 1002,
