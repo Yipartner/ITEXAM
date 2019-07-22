@@ -16,7 +16,7 @@ class SubjectController extends Controller
     public function __construct(SubjectService $subjectService)
     {
         $this->subjectService = $subjectService;
-        $this->middleware(['token', 'teacher']);
+        $this->middleware(['token', 'teacher'])->except(['getSubjectById', 'getSubjectList']);
     }
 
 
