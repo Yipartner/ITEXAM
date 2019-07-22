@@ -18,14 +18,14 @@ class Token
 
     public function handle(Request $request, Closure $next)
     {
-//        $request->user = new DefaultUser();
-//        return $next($request);
-//        if (empty($request->header('token'))) {
-//            return response()->json([
-//                'code' => 1002,
-//                'message' => '缺少token'
-//            ]);
-//        }
+        $request->user = new DefaultUser();
+        return $next($request);
+        if (empty($request->header('token'))) {
+            return response()->json([
+                'code' => 1002,
+                'message' => '缺少token'
+            ]);
+        }
         $token = $request->header('token');
         $user = $this->getUserByToken($token);
 
@@ -57,7 +57,7 @@ class Token
 }
 
 class DefaultUser{
-    public $id = 99998;
+    public $id = 1;
     public $name = '测试用户';
     public $card_num = '20160000';
     public $role = 'student';

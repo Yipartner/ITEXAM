@@ -105,7 +105,14 @@ class PaperService
             ]);
     }
 
-
+    public function getPaperListByUser($user_id,$page_size){
+        $papers = DB::table('user_papers')
+            ->where('user_papers.user_id','=',$user_id)
+            ->join(self::$tableName,self::$tableName.".id",'=','user_papers.paper_id')
+            ->select(self::$tableName.".*")
+            ->paginate($page_size);
+        return $papers;
+    }
 
 
 }

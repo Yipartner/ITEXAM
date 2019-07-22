@@ -18,7 +18,7 @@ class PaperController extends Controller
         $this->paperService = $paperService;
         $this->userPaperService = $userPaperService;
         $this->middleware('token')->except(['getPaperInfo','getPaperList']);
-        $this->middleware('teacher')->except(['getPaperInfo','getPaperList']);
+        $this->middleware('teacher')->except(['getPaperInfo','getPaperList','getMyPapers']);
 
     }
     // 创建空白试卷
@@ -202,11 +202,22 @@ class PaperController extends Controller
 
     public function getPaperList(Request $request)
     {
+        $page_size = $request->input('page_size',15);
         $papers = DB::table('papers')
-            ->get();
+            ->paginate($page_size);
         return response()->json([
             'code' => 1000,
             'data' => $papers
+        ]);
+    }
+
+    public function getMyPapers(Request $request){
+        $user = $request->user;
+        $papers = $this->paperService->getPaperListByUser($user->id,$request->input('page_size',15));
+        return response()->json([
+            'code'=>1000,
+            'message'=>'获取我的试卷列表成功',
+            'data'=> $papers
         ]);
     }
 }

@@ -21,6 +21,7 @@ Route::post('/login','UserController@login');
 Route::get('/user','UserController@getUser');
 Route::get('/users','UserController@getUsers');
 Route::delete('/user','UserController@deleteUsers');
+Route::get('/me/papers','PaperController@getMyPapers');
 
 
 Route::post('/create/blockpaper','PaperController@createWhitePaper');
