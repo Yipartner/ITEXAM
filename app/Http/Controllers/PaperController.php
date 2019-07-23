@@ -31,13 +31,16 @@ class PaperController extends Controller
                 'message' => '缺少试卷名称字段'
             ]);
         }
-        $this->paperService->createPaper([
+        $id = $this->paperService->createPaper([
             'paper_name' => $name,
             'status' => 'init'
         ]);
         return response()->json([
             'code' => 1000,
-            'message' => '创建空白试卷成功'
+            'message' => '创建空白试卷成功',
+            'data'=>[
+                'paper_id'=>$id
+            ]
         ]);
     }
     // 给试卷添加题目

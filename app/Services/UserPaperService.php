@@ -78,4 +78,30 @@ class UserPaperService
                 'status' => 'finish'
             ]);
     }
+
+    // 获取用户试卷做题情况
+    public function getUserPaperDoStatus($user,$paper_id){
+        $status = DB::table('user_paper_problems')
+            ->where([
+                ['user_id','=',$user],
+                ['paper_id','=',$paper_id]
+            ])->get();
+        $data = [];
+        foreach ($status as $solution){
+            $data[$solution->problem_id]=$solution;
+            unset($data[$solution->id]->problem_id);
+        }
+        return $data;
+    }
+    // 获取试卷正确错误数量
+    public function getPaperResult($user,$paper_id){
+        $res = DB::table('user_paper_problems')
+            ->where([
+                ['user_id','=',$user],
+                ['paper_id','=',$paper_id]
+            ])->groupby('judge_result')
+            ->select(DB::raw('judge_result,count(*) as count'))
+            ->get();
+        return $res;
+    }
 }

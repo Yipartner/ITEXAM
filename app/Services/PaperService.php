@@ -22,8 +22,9 @@ class PaperService
         $time = Carbon::now();
         $paper['created_at'] =$time;
         $paper['updated_at'] =$time;
-        DB::table(self::$tableName)
-            ->insert($paper);
+        $id = DB::table(self::$tableName)
+            ->insertGetId($paper);
+        return $id;
     }
 
     public function getPaperStatus($paper_id){

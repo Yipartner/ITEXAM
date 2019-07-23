@@ -35,6 +35,8 @@ Route::get('/papers','PaperController@getPaperList');
 
 Route::post('/paper/save','UserPaperController@save');
 Route::post('/paper/submit','UserPaperController@submit');
+Route::get('/me/paper/status','UserPaperController@getPaperSaveStatus');
+Route::get('/me/paper/res','UserPaperController@getUserPaperRes');
 
 Route::get('/paper/user','PaperController@getPaperUser');
 Route::post('/paper/user/add','PaperController@addPaperUser');

@@ -34,7 +34,7 @@ class UserPaperController extends Controller
         foreach ($user_paper_problem as $problem) {
             array_push($data, [
                 'user_id' => $user->id,
-                'paper_id'=> $paper_id,
+                'paper_id' => $paper_id,
                 'problem_id' => $problem['id'],
                 'user_answer' => isset($problem['user_answer']) ? $problem['user_answer'] : null,
                 'answer_info' => isset($problem['answer_info']) ? json_encode($problem['answer_info']) : json_encode([
@@ -66,7 +66,7 @@ class UserPaperController extends Controller
         foreach ($user_paper_problem as $problem) {
             array_push($data, [
                 'user_id' => $user->id,
-                'paper_id'=> $paper_id,
+                'paper_id' => $paper_id,
                 'problem_id' => $problem['id'],
                 'user_answer' => isset($problem['user_answer']) ? $problem['user_answer'] : null,
                 'answer_info' => isset($problem['answer_info']) ? json_encode($problem['answer_info']) : json_encode([
@@ -84,6 +84,40 @@ class UserPaperController extends Controller
         return response()->json([
             'code' => 1000,
             'message' => '提交成功',
+            'data' => $res
+        ]);
+    }
+
+    public function getPaperSaveStatus(Request $request)
+    {
+        $paper_id = $request->input('paper_id', -1);
+        if ($paper_id == -1) {
+            return response()->json([
+                'code' => 1001,
+                'message' => '缺少paper_id'
+            ]);
+        }
+        $status = $this->userPaperService->getUserPaperDoStatus($request->user->id, $paper_id);
+        return response()->json([
+            'code' => 1000,
+            'message' => '查询成功',
+            'data' => $status
+        ]);
+    }
+
+    public function getUserPaperRes(Request $request)
+    {
+        $paper_id = $request->input('paper_id', -1);
+        if ($paper_id == -1) {
+            return response()->json([
+                'code' => 1001,
+                'message' => '缺少paper_id'
+            ]);
+        }
+        $res = $this->userPaperService->getPaperResult($request->user->id, $paper_id);
+        return response()->json([
+            'code' => 1000,
+            'message' => '查询成功',
             'data' => $res
         ]);
     }
